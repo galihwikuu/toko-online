@@ -40,8 +40,11 @@ require_once 'sidebar.php';
 <?php if ($detail_pesanan): ?>
 <!-- Detail Pesanan -->
 <div class="box">
-    <div class="box-title">Detail Pesanan: <?= $detail_pesanan['kode_pesanan'] ?> &nbsp; <a href="pesanan.php" class="btn btn-sm" style="float:right;">← Kembali</a></div>
     <div class="box-body">
+        <div class="box-title detail-header">
+            <span>Detail Pesanan: <?= $detail_pesanan['kode_pesanan'] ?></span>
+            <a href="pesanan.php" class="btn btn-sm">← Kembali</a>
+        </div>
         <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:15px;">
             <div style="flex:1; min-width:220px;">
                 <p><strong>Pembeli:</strong> <?= $detail_pesanan['user_nama'] ?></p>
@@ -71,26 +74,37 @@ require_once 'sidebar.php';
                 </form>
             </div>
         </div>
-        <table class="table">
-            <thead><tr><th>Produk</th><th>Harga Satuan</th><th>Jumlah</th><th>Subtotal</th></tr></thead>
-            <tbody>
-                <?php foreach ($detail_pesanan['items'] as $item): ?>
-                <tr>
-                    <td><?= $item['nama_produk'] ?></td>
-                    <td><?= formatRupiah($item['harga']) ?></td>
-                    <td><?= $item['jumlah'] ?></td>
-                    <td><?= formatRupiah($item['subtotal']) ?></td>
-                </tr>
-                <?php endforeach; ?>
-                <tr>
-                    <td colspan="3" class="text-right"><strong>TOTAL</strong></td>
-                    <td><strong class="text-red"><?= formatRupiah($detail_pesanan['total']) ?></strong></td>
-                </tr>
-            </tbody>
-        </table></div>
-    </div>
-</div>
-<?php else: ?>
+            <div class="table-responsive">
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th>Harga Satuan</th>
+                            <th>Jumlah</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach ($detail_pesanan['items'] as $item): ?>
+                        <tr>
+                            <td><?= $item['nama_produk'] ?></td>
+                            <td><?= formatRupiah($item['harga']) ?></td>
+                            <td><?= $item['jumlah'] ?></td>
+                            <td><?= formatRupiah($item['subtotal']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>TOTAL</strong></td>
+                            <td><strong class="text-red"><?= formatRupiah($detail_pesanan['total']) ?></strong></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        <?php else: ?>
 
 <!-- Daftar Pesanan -->
 <div class="box">
