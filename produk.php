@@ -31,7 +31,7 @@ $related_stmt = $db->prepare("SELECT * FROM produk
                               WHERE kategori_id = ?
                               AND id != ?
                               AND status='aktif'
-                              LIMIT 4");
+                              LIMIT 10");
 $related_stmt->bind_param("ii", $produk['kategori_id'], $produk['id']);
 $related_stmt->execute();
 $related_products = $related_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -131,31 +131,31 @@ require_once 'includes/header.php';
         <div class="box">
             <div class="box-title">Produk Terkait</div>
             <div class="box-body">
-                <div class="product-grid product-grid--related">
-                    <?php foreach ($related_products as $p): ?>
-                        <a href="produk.php?id=<?= $p['id'] ?>" style="text-decoration:none; color:inherit;">
-                            <div class="product-card">
-                                <?php if ($p['foto'] && file_exists(UPLOAD_DIR . $p['foto'])): ?>
-                                    <img src="<?= BASE_URL ?>uploads/products/<?= $p['foto'] ?>" alt="<?= $p['nama'] ?>">
+                <div class="related-scroll-wrapper">
+                    <div class="product-grid product-grid--related">
+                        <?php foreach ($related_products as $p): ?>
+                            <a href="produk.php?id=<?= $p['id'] ?>" style="text-decoration:none; color:inherit;">
+                                <div class="product-card">
+                                    <?php if ($p['foto'] && file_exists(UPLOAD_DIR . $p['foto'])): ?>
+                                        <img src="<?= BASE_URL ?>uploads/products/<?= $p['foto'] ?>" alt="<?= $p['nama'] ?>">
                                     <?php else: ?>
                                         <div style="height:160px; background:#eee; display:flex; align-items:center; justify-content:center; color:#aaa;">Tidak ada foto</div>
-                                        <?php endif; ?>
-                                        <div class="product-card-body">
-                                            <div class="product-card-title"><?= $p['nama'] ?></div>
-                                            <div class="product-card-price"><?= formatRupiah($p['harga']) ?></div>
-                                            <div class="product-card-stok">Stok: <?= $p['stok'] ?> pcs</div>
-                                        </div>
+                                    <?php endif; ?>
+                                    <div class="product-card-body">
+                                        <div class="product-card-title"><?= $p['nama'] ?></div>
+                                        <div class="product-card-price"><?= formatRupiah($p['harga']) ?></div>
+                                        <div class="product-card-stok">Stok: <?= $p['stok'] ?> pcs</div>
                                     </div>
-                                </a>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
     <?php endif; ?>
-    
-</div>
-
+    </div>  
 <!-- ========== MODAL BELI LANGSUNG ========== -->
 <?php if (isLoggedIn() && !isAdmin() && $produk['stok'] > 0): ?>
 <div id="modalBeliLangsung" style="
