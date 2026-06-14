@@ -863,6 +863,10 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     .navbar-nav.is-open{
         transform: translateX(0);
     }
+
+    .navbar-brand {
+        margin-left: -15px;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -1283,5 +1287,30 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     }
 }
 
+@media (max-width: 768px) {
+    .navbar-nav{
+        position: fixed;
+        top: 60px;
+        right: -260px;
 
+        width: 260px;
+        height: calc(100vh - 60px);
 
+        background: #fff;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
+        transition: right .3s ease;
+
+        z-index: 1001;
+    }
+}
+body.no-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
