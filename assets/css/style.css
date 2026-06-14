@@ -986,6 +986,18 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     height: 0;
 }
 
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive .table {
+    min-width: 900px;
+    width: max-content;
+}
+
+
+
 /* =========================
    ADMIN RESPONSIVE FIX
    Mobile-first fixes for admin panel

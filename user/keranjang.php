@@ -171,7 +171,7 @@ require_once '../includes/header.php';
     <!-- TAMPILAN BELI LANGSUNG                 -->
     <!-- ══════════════════════════════════════ -->
     <div style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-start;">
-        <div style="flex:2; min-width:300px;">
+        <div style="flex:3; min-width:0;">
             <div class="box">
                 <div class="box-title">Ringkasan Produk</div>
                 <div class="box-body" style="padding:0;">
@@ -239,31 +239,53 @@ require_once '../includes/header.php';
                 <div class="box-title">Keranjang Belanja (<?= count($keranjang) ?> item)</div>
                 <div class="box-body" style="padding:0;">
                     <form method="POST">
-                        <table class="table">
-                            <thead><tr><th>Produk</th><th>Harga</th><th>Jumlah</th><th>Subtotal</th><th></th></tr></thead>
-                            <tbody>
-                                <?php foreach ($keranjang as $item): ?>
-                                <tr>
-                                    <td>
-                                        <?php if ($item['foto'] && file_exists(UPLOAD_DIR . $item['foto'])): ?>
-                                            <img src="<?= BASE_URL ?>uploads/products/<?= $item['foto'] ?>" class="img-product" style="float:left; margin-right:8px;">
-                                        <?php endif; ?>
-                                        <?= $item['nama'] ?>
-                                        <br><small class="text-muted">Stok: <?= $item['stok'] ?></small>
+                        <input type="hidden" name="update_jumlah" value="1">
+                        <div class="table-responsive">
+
+                            <table class="table">
+                                <tbody>
+                                    <thead>
+                                        <tr>
+                                            <th>Produk</th>
+                                            <th>Harga</th>
+                                            <th>Jumlah</th>
+                                            <th>Subtotal</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <?php foreach ($keranjang as $item): ?>
+                                    <tr>
+                                        <td>
+                                            <?php if ($item['foto'] && file_exists(UPLOAD_DIR . $item['foto'])): ?>
+                                                <img src="<?= BASE_URL ?>uploads/products/<?= $item['foto'] ?>" class="img-product" style="float:left; margin-right:8px;">
+                                                <?php endif; ?>
+                                                <?= $item['nama'] ?>
+                                                <br><small class="text-muted">Stok: <?= $item['stok'] ?></small>
+                                        </td>
+                                        <td><?= formatRupiah($item['harga']) ?></td>
+                                        <td>
+                                            <input type="number"
+                                            name="jumlah[<?= $item['kid'] ?>]"
+                                            value="<?= $item['jumlah'] ?>"
+                                            min="1"
+                                            max="<?= $item['stok'] ?>"
+                                            onchange="this.form.submit()"
+                                            style="width:60px; padding:4px; border:1px solid #ccc; border-radius:3px;">
+                                        </td>
+                                        <td><?= formatRupiah($item['harga'] * $item['jumlah']) ?></td>
+                                        <td style="text-align:center; white-space:nowrap;">
+                                            <a href="keranjang.php?hapus=<?= $item['kid'] ?>"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Hapus item ini?')">
+                                            ×
+                                        </a>
                                     </td>
-                                    <td><?= formatRupiah($item['harga']) ?></td>
-                                    <td>
-                                        <input type="number" name="jumlah[<?= $item['kid'] ?>]" value="<?= $item['jumlah'] ?>" min="1" max="<?= $item['stok'] ?>" style="width:60px; padding:4px; border:1px solid #ccc; border-radius:3px;">
-                                    </td>
-                                    <td><?= formatRupiah($item['harga'] * $item['jumlah']) ?></td>
-                                    <td><a href="keranjang.php?hapus=<?= $item['kid'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus item ini?')">×</a></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
-                        <div style="padding:10px;">
-                            <button type="submit" name="update_jumlah" class="btn">Update Jumlah</button>
-                        </div>
+                    </div>
+
                     </form>
                 </div>
             </div>

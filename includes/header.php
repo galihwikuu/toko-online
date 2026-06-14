@@ -19,6 +19,7 @@ if (isLoggedIn() && !isAdmin()) {
     <title><?= $page_title ?></title>
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
 
@@ -51,7 +52,9 @@ if (isLoggedIn() && !isAdmin()) {
                 <?php else: ?>
                     <li>
                         <a href="<?= BASE_URL ?>user/keranjang.php">
+                            <i class="fa-solid fa-cart-shopping"></i>
                             Keranjang
+
                             <?php if ($cart_count > 0): ?>
                                 <span class="badge-cart"><?= $cart_count ?></span>
                             <?php endif; ?>

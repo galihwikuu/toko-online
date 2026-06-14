@@ -104,10 +104,11 @@ require_once 'includes/header.php';
                         <?php if ($produk['stok'] > 0): ?>
                             <div style="display:flex; gap:10px; flex-wrap:wrap;">
                                 <a href="user/keranjang.php?aksi=tambah&id=<?= $produk['id'] ?>" class="btn btn-danger">
-                                    + Keranjang
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                    Tambah Keranjang
                                 </a>
                                 <button type="button" class="btn btn-primary" onclick="bukaModal()">
-                                    ⚡ Beli Langsung
+                                    Beli Sekarang
                                 </button>
                             </div>
                         <?php else: ?>
@@ -230,7 +231,7 @@ require_once 'includes/header.php';
             <input type="hidden" name="aksi" value="beli_langsung">
             <input type="hidden" name="jumlah" id="hiddenJumlah" value="1">
             <button type="submit" onclick="syncJumlah()" class="btn btn-primary btn-block" style="padding:14px; font-size:15px; border-radius:10px;">
-                ⚡ Beli Sekarang
+                Beli Sekarang
             </button>
         </form>
     </div>
