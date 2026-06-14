@@ -39,7 +39,7 @@ if (isLoggedIn() && !isAdmin()) {
         <div class="nav-overlay" id="navOverlay"></div>
 
         <ul class="navbar-nav" id="navbarNav">
-            <li><a href="/toko-online/index.php">Beranda</a></li>
+            <li><a href="<?= BASE_URL ?>index.php">Beranda</a></li>
             <?php if (isLoggedIn()): ?>
                 <?php if (isAdmin()): ?>
                     <li>
