@@ -41,8 +41,11 @@ require_once '../includes/header.php';
 
     <?php if ($detail): ?>
     <div class="box">
-        <div class="box-title">Detail Pesanan: <?= $detail['kode_pesanan'] ?> &nbsp; <a href="pesanan.php" style="float:right;" class="btn btn-sm">← Kembali</a></div>
         <div class="box-body">
+            <div class="box-title detail-header">
+                <span>Detail Pesanan: <?= $detail['kode_pesanan'] ?></span>
+                <a href="pesanan.php" class="btn btn-sm">← Kembali</a>
+            </div>
             <p><strong>Tanggal:</strong> <?= date('d/m/Y H:i', strtotime($detail['created_at'])) ?></p>
             <p><strong>Status:</strong> <span class="status status-<?= $detail['status'] ?>"><?= ucfirst($detail['status']) ?></span></p>
             <p><strong>Alamat:</strong> <?= nl2br($detail['alamat_pengiriman']) ?></p>
