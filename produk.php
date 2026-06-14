@@ -102,13 +102,15 @@ require_once 'includes/header.php';
 
                     <?php if (isLoggedIn() && !isAdmin()): ?>
                         <?php if ($produk['stok'] > 0): ?>
-                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                                <a href="user/keranjang.php?aksi=tambah&id=<?= $produk['id'] ?>" class="btn btn-danger">
+                            <div class="product-actions">
+                                <a href="user/keranjang.php?aksi=tambah&id=<?= $produk['id'] ?>" class="btn-cart-modern">
                                     <i class="fa-solid fa-cart-shopping"></i>
-                                    Tambah Keranjang
+                                    <span>Tambah Keranjang</span>
                                 </a>
-                                <button type="button" class="btn btn-primary" onclick="bukaModal()">
-                                    Beli Sekarang
+
+                                <button type="button" class="btn-buy-modern" onclick="bukaModal()">
+                                    <i class="fa-solid fa-bolt"></i>
+                                    <span>Beli Sekarang</span>
                                 </button>
                             </div>
                         <?php else: ?>
@@ -125,31 +127,33 @@ require_once 'includes/header.php';
 
     <!-- Produk Terkait -->
     <?php if (!empty($related_products)): ?>
-    <div class="box">
-        <div class="box-title">Produk Terkait</div>
-        <div class="box-body">
-            <div class="product-grid">
-                <?php foreach ($related_products as $p): ?>
-                <a href="produk.php?id=<?= $p['id'] ?>" style="text-decoration:none; color:inherit;">
-                    <div class="product-card">
-                        <?php if ($p['foto'] && file_exists(UPLOAD_DIR . $p['foto'])): ?>
-                            <img src="<?= BASE_URL ?>uploads/products/<?= $p['foto'] ?>" alt="<?= $p['nama'] ?>">
-                        <?php else: ?>
-                            <div style="height:160px; background:#eee; display:flex; align-items:center; justify-content:center; color:#aaa;">Tidak ada foto</div>
-                        <?php endif; ?>
-                        <div class="product-card-body">
-                            <div class="product-card-title"><?= $p['nama'] ?></div>
-                            <div class="product-card-price"><?= formatRupiah($p['harga']) ?></div>
-                            <div class="product-card-stok">Stok: <?= $p['stok'] ?> pcs</div>
+    <div class="related-products">
+        <div class="box">
+            <div class="box-title">Produk Terkait</div>
+            <div class="box-body">
+                <div class="product-grid product-grid--related">
+                    <?php foreach ($related_products as $p): ?>
+                        <a href="produk.php?id=<?= $p['id'] ?>" style="text-decoration:none; color:inherit;">
+                            <div class="product-card">
+                                <?php if ($p['foto'] && file_exists(UPLOAD_DIR . $p['foto'])): ?>
+                                    <img src="<?= BASE_URL ?>uploads/products/<?= $p['foto'] ?>" alt="<?= $p['nama'] ?>">
+                                    <?php else: ?>
+                                        <div style="height:160px; background:#eee; display:flex; align-items:center; justify-content:center; color:#aaa;">Tidak ada foto</div>
+                                        <?php endif; ?>
+                                        <div class="product-card-body">
+                                            <div class="product-card-title"><?= $p['nama'] ?></div>
+                                            <div class="product-card-price"><?= formatRupiah($p['harga']) ?></div>
+                                            <div class="product-card-stok">Stok: <?= $p['stok'] ?> pcs</div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
-                </a>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </div>
+                </div>
     <?php endif; ?>
-
+    
 </div>
 
 <!-- ========== MODAL BELI LANGSUNG ========== -->
@@ -252,12 +256,16 @@ const maxStok = <?= $produk['stok'] ?>;
 
 function bukaModal() {
     document.getElementById('modalBeliLangsung').classList.add('aktif');
-    document.body.style.overflow = 'hidden';
+
+    document.body.classList.add('no-scroll');
+    document.documentElement.classList.add('no-scroll');
 }
 
 function tutupModal() {
     document.getElementById('modalBeliLangsung').classList.remove('aktif');
-    document.body.style.overflow = '';
+
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
 }
 
 // Tutup modal kalau klik backdrop

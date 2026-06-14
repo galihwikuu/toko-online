@@ -1,5 +1,5 @@
 <div class="footer">
-    <p>&copy; <?= date('Y') ?> TokoKu. Semua hak dilindungi.</p>
+    <p>&copy; <?= date('Y') ?> TokoKu.</p>
 </div>
 
 <script>

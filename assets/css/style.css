@@ -972,6 +972,144 @@ textarea.form-control { resize: vertical; min-height: 90px; }
         text-align: center;
     }
 }
+.product-actions{
+    margin-top:auto;
+    display:flex;
+    gap:12px;
+    width:100%;
+    align-items:stretch;
+}
+
+.btn-cart-modern,
+.btn-buy-modern{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    padding:12px 20px;
+    border-radius:12px;
+
+    font-size:14px;
+    font-weight:600;
+
+    text-decoration:none;
+    cursor:pointer;
+
+    transition:all .25s ease;
+}
+
+.btn-cart-modern{
+    width:52px;
+    min-width:52px;
+    flex-shrink:0;
+
+    background:#fff;
+    color:#e63946;
+    border:2px solid #e63946;
+}
+
+.btn-cart-modern span{
+    display:none;
+}
+
+.btn-cart-modern i{
+    font-size:20px;
+}
+
+.btn-buy-modern{
+    background:#e63946;
+    color:#fff;
+    border:none;
+
+    flex:1;
+    width:auto; /* penting supaya tidak konflik */
+}
+
+@media (max-width:576px){
+    .product-actions{
+        flex-wrap:nowrap; /* boleh, tapi hati-hati */
+        gap:10px;
+    }
+
+    .btn-buy-modern{
+        flex:1;
+        min-width:0; /* penting biar tidak maksa lebar */
+    }
+}
+
+.box-body > div{
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+    align-items:stretch;
+}
+
+.box-body > div > div:last-child{
+    display:flex;
+    flex-direction:column;
+}
+
+
+
+.related-products .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* mobile: 2 kolom */
+    gap: 16px;
+    align-items: stretch;
+}
+
+@media (min-width: 576px) {
+    .related-products .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .related-products .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.related-products .product-card{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+}
+
+.related-products .product-card img,
+.related-products .related-products .product-card > div{
+    width:100%;
+    height:160px;
+    object-fit:cover;
+}
+
+.related-products .product-card-body{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:10px;
+    flex:1;
+}
+
+.product-grid--related {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 576px) {
+    .product-grid--related {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .product-grid--related {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
 
 
 .table-responsive {
@@ -996,7 +1134,11 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     width: max-content;
 }
 
-
+.produk-cell {
+    white-space: normal !important;
+    min-width: 200px;
+    word-break: break-word;
+}
 
 /* =========================
    ADMIN RESPONSIVE FIX

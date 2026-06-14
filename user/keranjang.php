@@ -162,7 +162,7 @@ require_once '../includes/header.php';
 <div class="container main-content">
     <div class="breadcrumb">
         <a href="<?= BASE_URL ?>index.php">Beranda</a> <span>&raquo;</span>
-        <?= $mode_langsung ? 'Beli Langsung' : 'Keranjang Belanja' ?>
+        <?= $mode_langsung ? 'Beli Sekarang' : 'Keranjang Belanja' ?>
     </div>
     <?= $msg ?>
 
@@ -171,29 +171,34 @@ require_once '../includes/header.php';
     <!-- TAMPILAN BELI LANGSUNG                 -->
     <!-- ══════════════════════════════════════ -->
     <div style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-start;">
-        <div style="flex:3; min-width:0;">
+        <div style="flex:2; min-width:300px;">
             <div class="box">
                 <div class="box-title">Ringkasan Produk</div>
                 <div class="box-body" style="padding:0;">
-                    <table class="table">
-                        <thead><tr><th>Produk</th><th>Harga</th><th>Jumlah</th><th>Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <?php if ($bl['foto'] && file_exists(UPLOAD_DIR . $bl['foto'])): ?>
-                                        <img src="<?= BASE_URL ?>uploads/products/<?= $bl['foto'] ?>" class="img-product" style="float:left; margin-right:8px;">
-                                    <?php endif; ?>
-                                    <?= htmlspecialchars($bl['nama']) ?>
-                                </td>
-                                <td><?= formatRupiah($bl['harga']) ?></td>
-                                <td><?= $bl['jumlah'] ?></td>
-                                <td><?= formatRupiah($bl['subtotal']) ?></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead><tr><th>Produk</th><th>Harga</th><th>Jumlah</th><th>Subtotal</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td class="produk-cell">
+                                        <?php if ($bl['foto'] && file_exists(UPLOAD_DIR . $bl['foto'])): ?>
+                                            <img src="<?= BASE_URL ?>uploads/products/<?= $bl['foto'] ?>"
+                                            class="img-product"
+                                            style="float:left; margin-right:8px;">
+                                            <?php endif; ?>
+                                            
+                                            <?= htmlspecialchars($bl['nama']) ?>
+                                        </td>
+                                        <td><?= formatRupiah($bl['harga']) ?></td>
+                                        <td><?= $bl['jumlah'] ?></td>
+                                        <td><?= formatRupiah($bl['subtotal']) ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
         <div style="flex:1; min-width:240px;">
             <div class="cart-total-box">

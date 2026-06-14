@@ -42,6 +42,7 @@ $page_title = 'Login';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Toko Online</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
 
@@ -65,7 +66,30 @@ $page_title = 'Login';
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
+
+                <div style="position:relative;">
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        class="form-control"
+                        required
+                        style="padding-right:45px;"
+                    >
+
+                    <i
+                        id="togglePassword"
+                        class="fa-solid fa-eye"
+                        style="
+                            position:absolute;
+                            right:15px;
+                            top:50%;
+                            transform:translateY(-50%);
+                            cursor:pointer;
+                            color:#777;
+                        "
+                    ></i>
+                </div>
             </div>
             <button type="submit" class="btn btn-danger btn-block">Masuk</button>
         </form>
@@ -81,6 +105,23 @@ $page_title = 'Login';
         </p>
     </div>
 </div>
+
+<script>
+const togglePassword = document.getElementById('togglePassword');
+const password = document.getElementById('password');
+
+togglePassword.addEventListener('click', function() {
+
+    const type = password.getAttribute('type') === 'password'
+        ? 'text'
+        : 'password';
+
+    password.setAttribute('type', type);
+
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+});
+</script>
 
 </body>
 </html>
