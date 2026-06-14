@@ -7,6 +7,74 @@ $db  = getDB();
 $uid = $_SESSION['user_id'];
 $msg = '';
 
+// ─────────────────────────────────────────────
+// BELI LANGSUNG: simpan ke session lalu redirect
+// ─────────────────────────────────────────────
+if (isset($_GET['aksi']) && $_GET['aksi'] === 'beli_langsung' && isset($_GET['id'])) {
+    $pid = (int)$_GET['id'];
+    $jumlah = max(1, (int)($_GET['jumlah'] ?? 1));
+    $produk = $db->query("SELECT * FROM produk WHERE id=$pid AND status='aktif'")->fetch_assoc();
+    if ($produk && $produk['stok'] >= $jumlah) {
+        $_SESSION['beli_langsung'] = [
+            'produk_id' => $pid,
+            'nama'      => $produk['nama'],
+            'harga'     => $produk['harga'],
+            'foto'      => $produk['foto'],
+            'jumlah'    => $jumlah,
+            'subtotal'  => $produk['harga'] * $jumlah,
+        ];
+        header('Location: keranjang.php?mode=langsung');
+    } else {
+        header('Location: ' . BASE_URL . 'index.php?error=stok');
+    }
+    exit;
+}
+
+// ─────────────────────────────────────────────
+// CHECKOUT BELI LANGSUNG (POST)
+// ─────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_langsung'])) {
+    $bl = $_SESSION['beli_langsung'] ?? null;
+    $alamat  = sanitize($_POST['alamat_pengiriman'] ?? '');
+    $catatan = sanitize($_POST['catatan'] ?? '');
+
+    if (!$bl) {
+        $msg = '<div class="alert alert-danger">Sesi beli langsung tidak ditemukan. Silakan coba lagi.</div>';
+    } elseif (empty($alamat)) {
+        $msg = '<div class="alert alert-danger">Alamat pengiriman wajib diisi.</div>';
+    } else {
+        // Cek stok terkini
+        $cek = $db->query("SELECT stok FROM produk WHERE id={$bl['produk_id']} AND status='aktif'")->fetch_assoc();
+        if (!$cek || $cek['stok'] < $bl['jumlah']) {
+            $msg = '<div class="alert alert-danger">Stok produk tidak mencukupi.</div>';
+        } else {
+            $total = $bl['subtotal'];
+            $kode  = 'ORD-' . date('YmdHis') . '-' . $uid;
+
+            $st = $db->prepare("INSERT INTO pesanan (user_id, kode_pesanan, total, alamat_pengiriman, catatan) VALUES (?,?,?,?,?)");
+            $st->bind_param("issss", $uid, $kode, $total, $alamat, $catatan);
+            $st->execute();
+            $pesanan_id = $db->insert_id;
+
+            $subtotal = $bl['subtotal'];
+            $st2 = $db->prepare("INSERT INTO detail_pesanan (pesanan_id, produk_id, nama_produk, harga, jumlah, subtotal) VALUES (?,?,?,?,?,?)");
+            $st2->bind_param("iisdid", $pesanan_id, $bl['produk_id'], $bl['nama'], $bl['harga'], $bl['jumlah'], $subtotal);
+            $st2->execute();
+
+            $db->query("UPDATE produk SET stok = stok - {$bl['jumlah']} WHERE id={$bl['produk_id']}");
+
+            // Hapus session beli langsung
+            unset($_SESSION['beli_langsung']);
+
+            header('Location: pesanan.php?sukses=1'); exit;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────
+// FITUR KERANJANG NORMAL (tidak berubah)
+// ─────────────────────────────────────────────
+
 // Tambah ke keranjang
 if (isset($_GET['aksi']) && $_GET['aksi'] === 'tambah' && isset($_GET['id'])) {
     $pid = (int)$_GET['id'];
@@ -35,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_jumlah'])) {
     $msg = '<div class="alert alert-success">Keranjang diperbarui.</div>';
 }
 
-// Checkout
+// Checkout dari keranjang
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     $alamat = sanitize($_POST['alamat_pengiriman'] ?? '');
     $catatan = sanitize($_POST['catatan'] ?? '');
@@ -82,14 +150,83 @@ $keranjang = $db->query("SELECT k.id as kid, k.jumlah, p.id as pid, p.nama, p.ha
 $total = array_sum(array_map(fn($i) => $i['harga'] * $i['jumlah'], $keranjang));
 
 $user_data = $db->query("SELECT * FROM users WHERE id=$uid")->fetch_assoc();
-$page_title = 'Keranjang Belanja';
+
+// Mode beli langsung
+$mode_langsung = (($_GET['mode'] ?? '') === 'langsung') && isset($_SESSION['beli_langsung']);
+$bl = $mode_langsung ? $_SESSION['beli_langsung'] : null;
+
+$page_title = $mode_langsung ? 'Beli Langsung' : 'Keranjang Belanja';
 require_once '../includes/header.php';
 ?>
 
 <div class="container main-content">
-    <div class="breadcrumb"><a href="<?= BASE_URL ?>index.php">Beranda</a> <span>&raquo;</span> Keranjang Belanja</div>
+    <div class="breadcrumb">
+        <a href="<?= BASE_URL ?>index.php">Beranda</a> <span>&raquo;</span>
+        <?= $mode_langsung ? 'Beli Langsung' : 'Keranjang Belanja' ?>
+    </div>
     <?= $msg ?>
 
+<?php if ($mode_langsung && $bl): ?>
+    <!-- ══════════════════════════════════════ -->
+    <!-- TAMPILAN BELI LANGSUNG                 -->
+    <!-- ══════════════════════════════════════ -->
+    <div style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-start;">
+        <div style="flex:2; min-width:300px;">
+            <div class="box">
+                <div class="box-title">Ringkasan Produk</div>
+                <div class="box-body" style="padding:0;">
+                    <table class="table">
+                        <thead><tr><th>Produk</th><th>Harga</th><th>Jumlah</th><th>Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <?php if ($bl['foto'] && file_exists(UPLOAD_DIR . $bl['foto'])): ?>
+                                        <img src="<?= BASE_URL ?>uploads/products/<?= $bl['foto'] ?>" class="img-product" style="float:left; margin-right:8px;">
+                                    <?php endif; ?>
+                                    <?= htmlspecialchars($bl['nama']) ?>
+                                </td>
+                                <td><?= formatRupiah($bl['harga']) ?></td>
+                                <td><?= $bl['jumlah'] ?></td>
+                                <td><?= formatRupiah($bl['subtotal']) ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div style="flex:1; min-width:240px;">
+            <div class="cart-total-box">
+                <table>
+                    <tr><td>Subtotal:</td><td class="text-right"><?= formatRupiah($bl['subtotal']) ?></td></tr>
+                    <tr><td>Ongkir:</td><td class="text-right">Gratis</td></tr>
+                    <tr class="total-row"><td>TOTAL:</td><td class="text-right"><?= formatRupiah($bl['subtotal']) ?></td></tr>
+                </table>
+            </div>
+            <div class="box" style="margin-top:12px;">
+                <div class="box-title">Checkout</div>
+                <div class="box-body">
+                    <form method="POST">
+                        <div class="form-group">
+                            <label>Alamat Pengiriman *</label>
+                            <textarea name="alamat_pengiriman" class="form-control" rows="3" required><?= htmlspecialchars($user_data['alamat'] ?? '') ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Catatan (opsional)</label>
+                            <textarea name="catatan" class="form-control" rows="2"></textarea>
+                        </div>
+                        <button type="submit" name="checkout_langsung" class="btn btn-danger btn-block">Buat Pesanan</button>
+                        <a href="<?= BASE_URL ?>index.php" class="btn btn-block" style="margin-top:6px; text-align:center;">Batal</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php else: ?>
+    <!-- ══════════════════════════════════════ -->
+    <!-- TAMPILAN KERANJANG NORMAL              -->
+    <!-- ══════════════════════════════════════ -->
     <?php if (empty($keranjang)): ?>
         <div class="box"><div class="box-body text-center" style="padding:30px;">
             <p>Keranjang belanja Anda kosong.</p>
@@ -159,6 +296,7 @@ require_once '../includes/header.php';
         </div>
     </div>
     <?php endif; ?>
+<?php endif; ?>
 </div>
 
 <?php require_once '../includes/footer.php'; ?>

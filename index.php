@@ -90,28 +90,21 @@ require_once 'includes/header.php';
     <?php else: ?>
     <div class="product-grid">
         <?php foreach ($produk_list as $p): ?>
-        <div class="product-card">
-            <a href="produk.php?id=<?= $p['id'] ?>">
+        <a href="produk.php?id=<?= $p['id'] ?>" style="text-decoration:none; color:inherit;">
+            <div class="product-card">
                 <?php if ($p['foto'] && file_exists(UPLOAD_DIR . $p['foto'])): ?>
                     <img src="<?= BASE_URL ?>uploads/products/<?= $p['foto'] ?>" alt="<?= $p['nama'] ?>">
                 <?php else: ?>
                     <div style="height:160px; background:#eee; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px;">Tidak ada foto</div>
                 <?php endif; ?>
-            </a>
-            <div class="product-card-body">
-                <div class="product-card-title">
-                    <a href="produk.php?id=<?= $p['id'] ?>" style="color:#333;"><?= $p['nama'] ?></a>
+                <div class="product-card-body">
+                    <div class="product-card-title"><?= $p['nama'] ?></div>
+                    <div style="font-size:11px; color:#888; margin-bottom:4px;"><?= $p['kategori_nama'] ?? '-' ?></div>
+                    <div class="product-card-price"><?= formatRupiah($p['harga']) ?></div>
+                    <div class="product-card-stok">Stok: <?= $p['stok'] ?> pcs</div>
                 </div>
-                <div style="font-size:11px; color:#888; margin-bottom:4px;"><?= $p['kategori_nama'] ?? '-' ?></div>
-                <div class="product-card-price"><?= formatRupiah($p['harga']) ?></div>
-                <div class="product-card-stok">Stok: <?= $p['stok'] ?> pcs</div>
-                <?php if (isLoggedIn() && !isAdmin()): ?>
-                    <a href="user/keranjang.php?aksi=tambah&id=<?= $p['id'] ?>" class="btn btn-danger btn-sm btn-block">+ Keranjang</a>
-                <?php else: ?>
-                    <a href="produk.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-block">Lihat Detail</a>
-                <?php endif; ?>
             </div>
-        </div>
+        </a>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
